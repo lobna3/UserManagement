@@ -1,0 +1,61 @@
+
+
+/* src/styles/App.css */
+.App {
+  background-color: #f0f2f5;  /* Light background for a more neutral feel */
+  min-height: 20vh;  /* Ensures full height of the page */
+  align-items: center;
+  width: 1350px;
+}
+
+.App-logo {
+  height: 15vmin; /* Adjusted size of the logo for better scaling */
+  pointer-events: none;
+  margin-bottom: 20px; /* Added space below the logo */
+}
+
+/* Reduce animation only if preferred-reduced-motion is set */
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.App-header {
+  background-color: #282c34;  /* Dark theme for the header */
+  width: 100%;
+  padding: 30px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(12px + 2vmin);  /* Increased font size for better readability */
+  color: white;
+  border-radius: 10px;  /* Slightly rounded corners for the header */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);  /* Soft shadow effect */
+  margin-bottom: 30px;  /* Space between header and main content */
+}
+
+/* Link styling with hover effect */
+.App-link {
+  color: #61dafb;
+  font-weight: bold;  /* Bold links for better emphasis */
+  text-decoration: none;
+  transition: color 0.3s ease;  /* Smooth color transition on hover */
+}
+
+.App-link:hover {
+  color: #21a1f1;  /* Slightly darker shade of blue on hover */
+  text-decoration: underline;  /* Underline effect for better interactivity */
+}
+
+/* Logo spin animation */
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
