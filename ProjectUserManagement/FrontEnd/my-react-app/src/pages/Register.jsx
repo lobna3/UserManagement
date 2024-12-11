@@ -30,10 +30,10 @@ const Register = () => {
   const queryParams = new URLSearchParams(location.search);
   const token = queryParams.get('token');
 
-  // Handle email verification if token is present in URL
   useEffect(() => {
     if (token) {
       verifyEmail(token);
+      console.log('token',token)
     }
   }, [token]);
 
@@ -42,14 +42,30 @@ const Register = () => {
     setIsVerifying(true); // Set loading state
     try {
       // Call the backend to verify the email token
-      const response = await axios.get(`http://127.0.0.1:5000/api/users/verify-email?token=${token}`);
-      setVerificationMessage(response.data.message); // Success message
+      const response = await axios.post(`http://127.0.0.1:5000/api/users/verify-email?token=${token}`);
+
+      // If verification is successful, show success message
+      setVerificationMessage(response.data.message);
+      setAlertMessage(response.data.message); // Show success message in the modal
+      setAlertType("success");
+      setShowModal(true); // Show success modal after verification
+
+      // Optionally navigate to another page after verification
+     setTimeout(() => {
+        navigate('/login');
+      }, 3000);
+
     } catch (error) {
+      // Handle error if verification fails
       setVerificationMessage(error.response?.data?.error || 'Verification failed.');
+      setAlertMessage(error.response?.data?.error || 'Verification failed.');
+      setAlertType("error");
+      setShowModal(true);
     } finally {
       setIsVerifying(false); // Reset loading state
     }
   };
+
 
   // Function to handle registration
   const postRegister = (body, navigate) => {
@@ -77,7 +93,7 @@ const Register = () => {
 
         // If the user was created successfully, show success alert
         // Redirect to login page after 2 seconds to give time for the modal to show
-       
+
       })
       .catch((error) => {
         console.error(error.response.data);

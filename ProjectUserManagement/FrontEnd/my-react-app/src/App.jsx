@@ -95,7 +95,11 @@ function App() {
   const postLogin = (body, navigate) => {
     axios.post('http://127.0.0.1:5000/api/users/login', body)
       .then((response) => {
-        const { accessToken, refreshToken } = response.data;
+        const { accessToken, refreshToken,user} = response.data;
+        if (!user.emailVerified) {
+          setErrors({ email: 'Please verify your email before logging in.' });
+          return;  // Stop further execution to prevent login
+        }
         localStorage.setItem('jwt', accessToken);  // Enregistrer le JWT dans localStorage
         localStorage.setItem('refreshToken', refreshToken);
 
@@ -105,8 +109,9 @@ function App() {
           role: decoded.role,
           token: accessToken,
           id: decoded.id,
+         
         });
-
+        
         navigate('/');  // Redirection après la connexion réussie
       })
       .catch((error) => {

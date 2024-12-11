@@ -126,47 +126,54 @@ module.exports = {
 
     VerifyEmail: async function (req, res) {
         const { token } = req.query;
-
-        // Vérifier si le token est présent dans la requête
+    
+        // Verify if the token is present in the request
         if (!token) {
             return res.status(400).json({ error: 'Token is required.' });
         }
-
+    
         try {
-            console.log("Received token:", token); // Vérifiez que le token est bien reçu ici
-
-            // Étape 1: Chercher l'utilisateur avec le token dans la base de données
+            console.log("Received token:", token); // Debugging to ensure the token is received
+    
+            // Step 1: Find the user by emailVerificationToken and ensure token has not expired
             const user = await User.findOne({
-                emailVerificationToken: token,
-                emailVerificationTokenExpires: { $gt: Date.now() },  // Vérifie que le token n'est pas expiré
+                emailVerificationToken: token, // Use emailVerificationToken to find the user
+                emailVerificationTokenExpires: { $gt: Date.now() }, // Ensure token has not expired
             });
-
-            // Si l'utilisateur n'est pas trouvé ou si le token est expiré
+    
+            // If no user is found or if the token is expired
             if (!user) {
                 return res.status(400).json({ error: 'Invalid or expired token.' });
             }
-
-            // Étape 2: Marquer l'email comme vérifié
-            user.emailVerified = true;  // Marquer l'email comme vérifié
-            user.emailVerificationToken = undefined;  // Supprimer le token de vérification
-            user.emailVerificationTokenExpires = undefined;  // Supprimer la date d'expiration du token
-
-            // Étape 3: Sauvegarder l'utilisateur mis à jour
-            const updatedUser = await user.save();
+    
+            // Step 2: Mark the email as verified
+            const updatedUser = await User.findOneAndUpdate(
+                { emailVerificationToken: token }, // Find the user using the emailVerificationToken
+                {
+                    $set: {
+                        emailVerified: true, // Mark the email as verified
+                        emailVerificationToken: undefined,  // Clear the verification token
+                        emailVerificationTokenExpires: undefined,  // Clear the token expiration date
+                    }
+                },
+                { new: true } // Return the updated user document
+            );
+    
             console.log("Updated user:", updatedUser);
-
-            // Étape 4: Retourner une réponse de succès
+    
+            // Step 3: Return a success response
             return res.status(200).json({
                 message: 'Email verified successfully. Your account is now activated.',
-                user: updatedUser  // Facultatif: Retourne l'utilisateur mis à jour
+                user: updatedUser  // Optional: Return the updated user object
             });
-
+    
         } catch (error) {
             console.error('Error verifying email:', error);
             return res.status(500).json({ error: 'Error verifying email.' });
         }
     },
-
+    
+    
     Login: async function (req, res) {
         const { errors, isValid } = ValidateLogin(req.body);
 

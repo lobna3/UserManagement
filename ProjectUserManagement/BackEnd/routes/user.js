@@ -18,7 +18,7 @@ router.post('/add', add)
 router.get('/:id', getUser)
 router.delete('/:id', deleteUser)
 router.put('/:id', update)
-router.get('/verify-email', VerifyEmail);
+router.post('/verify-email', VerifyEmail);
 router.post('/logout', Logout);
 router.post('/forgot-password', ForgotPassword);
 router.post('/reset-password', ResetPassword);

@@ -29,8 +29,8 @@ const userSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
-    emailVerificationToken: String,
-    emailVerificationTokenExpires: Date,
+    emailVerificationToken: { type: String, required: true }, // This should be a string
+    emailVerificationTokenExpires: { type: Date, required: true }, // This should be a date
     passwordResetToken: String,
     passwordResetTokenExpires: Date,
     googleId:String,
