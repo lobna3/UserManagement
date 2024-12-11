@@ -73,17 +73,17 @@ const Profile = (props) => {
         formData.append("address", address);
         formData.append("bio", bio);
         formData.append("postalcode", postalcode);
-    
+
         if (file) {
             console.log("File selected:", file);  // Check if file is selected
             formData.append("my_file", file);
         } else {
             formData.append("imageUrl", imageUrl);
         }
-    
+
         postProfile(formData);
     };
-   console.log('user Profile',profile)
+    console.log('user Profile', profile)
 
     return (
         <div className="container p-4 mt-4">
@@ -96,10 +96,16 @@ const Profile = (props) => {
                     <div className="p-6 shadow-lg p-3 mb-5 bg-white rounded-lg">
                         <form onSubmit={handleSubmit}>
                             <div className="mb-3">
+                                <label className="form-label">Name: <strong>{profile.user?.name}</strong></label>
+                            </div>
+                            <div className="mb-3">
+                                <label className="form-label">Email: <strong>{profile.user?.email}</strong></label>
+                            </div>
+                            <div className="mb-3">
                                 <label className="form-label">Telephone</label>
                                 <input
                                     type="text"
-                                    className="form-control rounded-3"
+                                    className="form-control rounded-3 border-secondary shadow-sm"
                                     value={tel}
                                     onChange={(e) => setTel(e.target.value)}
                                 />
@@ -108,7 +114,7 @@ const Profile = (props) => {
                                 <label className="form-label">City</label>
                                 <input
                                     type="text"
-                                    className="form-control rounded-3"
+                                    className="form-control rounded-3 border-secondary shadow-sm"
                                     value={city}
                                     onChange={(e) => setCity(e.target.value)}
                                 />
@@ -117,7 +123,7 @@ const Profile = (props) => {
                                 <label className="form-label">Country</label>
                                 <input
                                     type="text"
-                                    className="form-control rounded-3"
+                                    className="form-control rounded-3 border-secondary shadow-sm"
                                     value={country}
                                     onChange={(e) => setCountry(e.target.value)}
                                 />
@@ -126,7 +132,7 @@ const Profile = (props) => {
                                 <label className="form-label">Address</label>
                                 <input
                                     type="text"
-                                    className="form-control rounded-3"
+                                    className="form-control rounded-3 border-secondary shadow-sm"
                                     value={address}
                                     onChange={(e) => setAddress(e.target.value)}
                                 />
@@ -135,7 +141,7 @@ const Profile = (props) => {
                                 <label className="form-label">Postal Code</label>
                                 <input
                                     type="text"
-                                    className="form-control rounded-3"
+                                    className="form-control rounded-3 border-secondary shadow-sm"
                                     value={postalcode}
                                     onChange={(e) => setPostalCode(e.target.value)}
                                 />
@@ -143,7 +149,7 @@ const Profile = (props) => {
                             <div className="mb-3">
                                 <label className="form-label">Bio</label>
                                 <textarea
-                                    className="form-control rounded-3"
+                                    className="form-control rounded-3 border-secondary shadow-sm"
                                     value={bio}
                                     onChange={(e) => setBio(e.target.value)}
                                 />
@@ -151,19 +157,20 @@ const Profile = (props) => {
                             <div className="mb-3">
                                 <label className="form-label">Upload Image</label>
                                 <div className="d-flex justify-content-center mb-3">
-                                    <img 
-                                        src={imageUrl || "https://via.placeholder.com/150"} 
+                                    <img
+                                        src={imageUrl || "https://via.placeholder.com/150"}
                                         alt="Profile"
-                                        className="w-32 h-32 object-cover rounded-circle border-4 border-primary shadow-lg" 
+                                        className="w-32 h-32 object-cover rounded-circle border-4 border-primary shadow-lg"
+                                        style={{ width: '100px', height: '100px', objectFit: 'cover' }}
                                     />
                                 </div>
-                                <input 
-                                    type="file" 
-                                    className="form-control rounded-3"
-                                    onChange={(e) => setFile(e.target.files[0])} 
+                                <input
+                                    type="file"
+                                    className="form-control rounded-3 border-secondary shadow-sm"
+                                    onChange={(e) => setFile(e.target.files[0])}
                                 />
                             </div>
-                            <button type="submit" className="btn btn-outline-primary w-100 py-2 mt-4 rounded-3">Update Profile</button>
+                            <button type="submit" className="btn btn-primary w-100 py-2 mt-4 rounded-3 shadow-lg">Update Profile</button>
                         </form>
                     </div>
                 </div>
@@ -173,6 +180,7 @@ const Profile = (props) => {
 };
 
 export default Profile;
+
 
 
 

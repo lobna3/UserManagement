@@ -16,6 +16,7 @@ import AdminRouter from './components/AdminRouter.jsx';
 import ForceRedirect from './components/ForceRedirect.jsx';
 import ForgotPassword from './pages/ForgotPassword.jsx';
 import ResetPassword from './pages/ResetPassword.jsx';
+import Dashboard from './pages/Dashboard.jsx'
 
 import store from './redux/store.js'
 import { Logout, setUser } from './redux/actions/authActions';
@@ -151,7 +152,7 @@ console.log('user',user)
           <NavBar user={user} />
           <Routes>
             {/* Route pour la page d'accueil protégée */}
-            <Route path="/" element={<PrivateRouter user={user} />} />
+            <Route path="/" element={<PrivateRouter user={user}><Dashboard user={user} /></PrivateRouter>} />
 
             {/* Route pour le profil utilisateur, accessible seulement si connecté */}
             <Route path="/profile" element={<PrivateRouter user={user}><Profile user={user} /></PrivateRouter>} />

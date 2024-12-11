@@ -1,6 +1,6 @@
 const Profile = require('../model/profile.js')
 const ValidateProfile = require("../validation/Profile")
-
+const User = require('../model/user.js')
 
 /**const AddProfile = async (req, res,imageUrl) => {
     const { errors, isValid } = ValidateProfile(req.body);
@@ -96,45 +96,58 @@ const FindAllProfiles = async (req, res) => {
 
 const FindSingleProfile = async (req, res) => {
     try {
-      // Check if req.user exists to ensure authentication worked
-      if (!req.user || !req.user._id) {
-        return res.status(400).json({ message: 'User ID not found in request.' });
-      }
-          console.log(req.user._id)
-      // Find the profile for the authenticated user
-      const data = await Profile.findOne({ user: req.user._id }).populate('user', ['name', 'email', 'role']);
-  
-      // If no profile is found for this user
-      if (!data) {
-        return res.status(404).json({ message: 'Profile not found for this user.' });
-      }
-  
-      // Successful response with the profile data
-      res.status(200).json(data);
+        // Check if req.user exists to ensure authentication worked
+        if (!req.user || !req.user._id) {
+            return res.status(400).json({ message: 'User ID not found in request.' });
+        }
+        console.log(req.user._id)
+        // Find the profile for the authenticated user
+        const data = await Profile.findOne({ user: req.user._id }).populate('user', ['name', 'email', 'role']);
+
+        // If no profile is found for this user
+        if (!data) {
+            return res.status(404).json({ message: 'Profile not found for this user.' });
+        }
+
+        // Successful response with the profile data
+        res.status(200).json(data);
     } catch (error) {
-      console.error('Error fetching profile:', error);
-  
-      // Return a more specific error message
-      res.status(500).json({ message: 'Server error', error: error.message || error });
+        console.error('Error fetching profile:', error);
+
+        // Return a more specific error message
+        res.status(500).json({ message: 'Server error', error: error.message || error });
     }
-  };
-  
-  module.exports = { FindSingleProfile };
+};
+
+module.exports = { FindSingleProfile };
+
+
+const DeleteProfile = async (req, res) => {
+    try {
+        const data = await Profile.findOneAndDelete({ _id: req.params.id })
+        res.status(200).json({ message: "deleted" })
+
+    } catch (error) {
+        res.status(404).json(error.message)
+    }
+}
+const AdminDashboard = async (req, res) => {
+    // Assuming you have a User and Profile model in MongoDB
+    const totalUsers = await User.countDocuments();
+    const totalProfiles = await Profile.countDocuments();
   
 
-const DeleteProfile = async (req ,res)=>{
-    try {
-        const data =  await Profile.findOneAndDelete({_id: req.params.id})
-        res.status(200).json({message: "deleted"})
- 
-     } catch (error) {
-         res.status(404).json(error.message)
-     }
+    res.json({
+        totalUsers,
+        totalProfiles,
+       
+    });
 }
 
 module.exports = {
     AddProfile,
     FindAllProfiles,
     FindSingleProfile,
-    DeleteProfile
+    DeleteProfile,
+    AdminDashboard
 }

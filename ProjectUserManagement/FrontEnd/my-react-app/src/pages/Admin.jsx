@@ -6,10 +6,11 @@ const Admin = (props) => {
 
     const [profiles, setProfiles] = useState([]);
     const [refetch, setRefetch] = useState(false);
+    const [showModal, setShowModal] = useState(false);  // State to manage modal visibility
+    const [selectedProfileId, setSelectedProfileId] = useState(null);  // Track the profile to delete
 
     // Function to fetch data from the API
     const fetchData = () => {
-        // Ensure that we have the token, either from props.user or localStorage
         const token = props.user.token || window.localStorage.getItem('jwt'); // Fallback to localStorage if token is not in user
 
         if (token) {
@@ -25,9 +26,7 @@ const Admin = (props) => {
                 .catch((error) => {
                     console.error(error);  // Log any errors
                     if (error.response && error.response.status === 401) {
-                        // Handle unauthorized errors (e.g., if the token is expired or invalid)
                         console.error("Unauthorized access, please log in again.");
-                        // Optionally, you can redirect the user to the login page here
                     }
                 });
         } else {
@@ -35,35 +34,44 @@ const Admin = (props) => {
         }
     };
 
-    // Function to delete a profile
-    const deleteData = (id) => {
-        const confirmDelete = window.confirm("Are you sure you want to delete this profile?");
-        if (confirmDelete) {
-            // Ensure the token is available for the request
-            const token = props.user.token || window.localStorage.getItem('jwt');
-            if (token) {
-                axios.delete(`http://127.0.0.1:5000/api/users/profiles/${id}`, {
-                    headers: {
-                        'Authorization': `${token}`  // Include the token in the request header
-                    }
+    // Function to handle delete
+    const handleDeleteClick = (id) => {
+        setSelectedProfileId(id);  // Set the profile ID to delete
+        setShowModal(true);  // Show the confirmation modal
+    };
+
+    // Function to confirm deletion
+    const deleteData = () => {
+        const token = props.user.token || window.localStorage.getItem('jwt');
+        if (token && selectedProfileId) {
+            axios.delete(`http://127.0.0.1:5000/api/users/profiles/${selectedProfileId}`, {
+                headers: {
+                    'Authorization': `${token}`  // Include the token in the request header
+                }
+            })
+                .then((response) => {
+                    console.log(response.data.message);  // Log the success message
+                    setRefetch(!refetch);  // Refresh the profiles list after delete
+                    setShowModal(false);  // Hide the modal after deletion
                 })
-                    .then((response) => {
-                        console.log(response.data.message);  // Log the success message
-                        setRefetch(!refetch);  // Refresh the profiles list after delete
-                    })
-                    .catch((error) => {
-                        console.error(error);  // Log any errors
-                    });
-            } else {
-                console.error("No token found, unable to delete profile.");
-            }
+                .catch((error) => {
+                    console.error(error);  // Log any errors
+                    setShowModal(false);  // Hide the modal even if deletion fails
+                });
+        } else {
+            console.error("No token found, unable to delete profile.");
         }
+    };
+
+    // Function to handle cancel
+    const cancelDelete = () => {
+        setShowModal(false);  // Hide the modal if the user cancels
     };
 
     // Use useEffect to fetch data when the component mounts or when refetch is triggered
     useEffect(() => {
         fetchData();  // Fetch the data when component is mounted or refetch changes
-    }, [refetch]);  // Run whenever refetch state changes
+    }, [refetch]);
 
     return (
         <div className="container p-4 mt-4">
@@ -111,7 +119,7 @@ const Admin = (props) => {
                                             <td>{profile.country}</td>
                                             <td>{profile.bio}</td>
                                             <td>
-                                                <button className="btn btn-danger mx-1" onClick={() => { deleteData(profile._id) }}>
+                                                <button className="btn btn-danger mx-1" onClick={() => handleDeleteClick(profile._id)}>
                                                     Delete
                                                 </button>
                                             </td>
@@ -127,8 +135,30 @@ const Admin = (props) => {
                     </div>
                 </div>
             </div>
+
+            {/* Modal for confirmation */}
+            {showModal && (
+                <div className="modal show" style={{ display: 'block' }}>
+                    <div className="modal-dialog">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h5 className="modal-title">Confirm Deletion</h5>
+                                <button type="button" className="btn-close" onClick={cancelDelete}></button>
+                            </div>
+                            <div className="modal-body">
+                                <p>Are you sure you want to delete this profile?</p>
+                            </div>
+                            <div className="modal-footer">
+                                <button type="button" className="btn btn-secondary" onClick={cancelDelete}>Cancel</button>
+                                <button type="button" className="btn btn-danger" onClick={deleteData}>Delete</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
 
 export default Admin;
+

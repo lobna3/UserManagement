@@ -2,12 +2,15 @@ const express = require('express')
 
 const router = express.Router()
 
-const { AddProfile, FindAllProfiles, FindSingleProfile, DeleteProfile } = require('../controller/profile.js')
+const { AddProfile, FindAllProfiles, FindSingleProfile, DeleteProfile ,AdminDashboard} = require('../controller/profile.js')
 
 const passport = require('passport')
 const { ROLES, inRole } = require('../security/Rolemiddleware')
 const { cloudinary } = require('../utils/cloudinary.js');
 const upload = require('../middleware/multer.js')
+
+
+router.get('/admin',passport.authenticate("jwt", { session: false }),inRole(ROLES.ADMIN),AdminDashboard)
 
 
 /* add profile route */
